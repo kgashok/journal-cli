@@ -17,12 +17,12 @@ namespace JournalCli.Infrastructure
             _rootDirectory = rootDirectory;
         }
 
-        public void Create(IJournalFrontMatter journalFrontMatter, string filePath, LocalDate entryDate)
+        public void Create(string filePath, IJournalFrontMatter journalFrontMatter, string content)
         {
             using (var fs = _fileSystem.File.CreateText(filePath))
             {
                 fs.Write(journalFrontMatter.ToString(asFrontMatter: true));
-                fs.WriteLine($"# {entryDate.ToString()}");
+                fs.WriteLine(content);
                 fs.Flush();
             }
         }

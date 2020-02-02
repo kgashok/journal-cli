@@ -169,8 +169,28 @@ namespace JournalCli.Core
 
             var parser = string.IsNullOrWhiteSpace(readme) ? null : new ReadmeParser(readme, entryDate);
             var frontMatter = new JournalFrontMatter(tags, parser);
-            journalWriter.Create(frontMatter, entryFilePath, entryDate);
+            var header = $"# {entryDate.ToString()}";
+            journalWriter.Create(entryFilePath, frontMatter, header);
             _systemProcess.Start(entryFilePath);
+        }
+
+        public void AppendEntryContent(LocalDate entryDate, string body, string heading, string[] tags)
+        {
+            var journalWriter = _readerWriterFactory.CreateWriter();
+            var entryFilePath = journalWriter.GetJournalEntryFilePath(entryDate);
+
+            if (journalWriter.EntryExists(entryFilePath))
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                var frontMatter = new JournalFrontMatter(tags);
+                if (string.IsNullOrWhiteSpace(heading))
+                    heading = entryDate.ToString();
+                var content = $"# {heading}{Environment.NewLine}{body}";
+                journalWriter.Create(entryFilePath, frontMatter, content);
+            }
         }
 
         public IEnumerable<string> GetRecentEntries(int limit)
